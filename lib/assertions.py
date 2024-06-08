@@ -45,3 +45,8 @@ class Assertions:
 
         for name in names:
             assert name in response_as_dict, f"Response JSON doesn't have key '{name}'"
+
+    @staticmethod
+    def assert_contend_value(response: Response, expected_value):
+        assert response.content.decode(
+            'utf-8') == expected_value, f" Unexpected response content '{response.content}'"
