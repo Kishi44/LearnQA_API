@@ -34,8 +34,8 @@ class BaseCase:
             email = f"{base_part}{random_part}@{domain}"
         return {
         'password': '123',
-        'username': 'learnqa',
-        'firstName': 'learnqa',
+        'username': 'learnqa1',
+        'firstName': 'learnqa123',
         'lastName': 'learnqa',
         'email': email
         }
