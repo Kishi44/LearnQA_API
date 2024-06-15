@@ -13,6 +13,7 @@ class TestUserAuth(BaseCase):
         ('no_token')
     ]
 
+    @allure.title("Prepare for the test")
     def setup_class(self):
         data = {
             'email': 'vinkotov@example.com',
@@ -25,6 +26,7 @@ class TestUserAuth(BaseCase):
         self.user_id_from_auth = self.get_json_value(response1, 'user_id')
 
     @allure.description("This test successfully authorize")
+    @allure.severity(allure.severity_level.CRITICAL)
     def test_auth_user(self):
 
         response2 = MyRequests.get(
@@ -40,6 +42,7 @@ class TestUserAuth(BaseCase):
     @allure.description("This test checks authorization status without cookie or token ")
     @pytest.mark.parametrize('condition', exclude_params)
     def test_negative_check(self, condition):
+        allure.dynamic.parameter('condition', condition)
 
         if condition == 'no_cookie':
             response2 = MyRequests.get(

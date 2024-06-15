@@ -3,6 +3,7 @@ from datetime import datetime
 
 from requests import Response
 
+
 class BaseCase:
     @staticmethod
     def get_cookie(response: Response, cookie_name):

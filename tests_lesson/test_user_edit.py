@@ -33,6 +33,7 @@ class TestUserEdit(BaseCase):
             self.token = self.get_header(response2, 'x-csrf-token')
 
     @allure.description('Edit just creates user. Change first name')
+    @allure.severity(allure.severity_level.CRITICAL)
     def test_edit_just_creates_user(self):
 
         with allure.step('Edit user name'):
@@ -56,6 +57,7 @@ class TestUserEdit(BaseCase):
                                                  "Wrong name after edit")
 
     @allure.description('Trying to change user data without authorization')
+    @allure.severity(allure.severity_level.CRITICAL)
     def test_edit_user_without_auth(self):
         response = MyRequests.put(f"/user/{self.user_id}",
                                   data={'firstName': self.new_name})
@@ -64,6 +66,7 @@ class TestUserEdit(BaseCase):
         Assertions.assert_contend_value(response, '{"error":"Auth token not supplied"}')
 
     @allure.description('Trying to change user data when authorization for another user')
+    @allure.severity(allure.severity_level.NORMAL)
     def test_edit_user_under_another_user(self):
         with allure.step("Register new user"):
             register_data = self.prepeare_registration_data()
@@ -87,28 +90,29 @@ class TestUserEdit(BaseCase):
             Assertions.assert_json_value_by_name(response, 'error', 'This user can only edit their own data.',
                                                  'Wrong answer')
 
-            with allure.step('Login new user'):
-                login_data = {
-                    'email': self.email_new,
-                    'password': self.password_new
-                }
-                response2 = MyRequests.post("/user/login", data=login_data)
+        with allure.step('Login new user'):
+            login_data = {
+                'email': self.email_new,
+                'password': self.password_new
+            }
+            response2 = MyRequests.post("/user/login", data=login_data)
 
-                self.auth_sid_new = self.get_cookie(response2, 'auth_sid')
-                self.token_new = self.get_header(response2, 'x-csrf-token')
+            self.auth_sid_new = self.get_cookie(response2, 'auth_sid')
+            self.token_new = self.get_header(response2, 'x-csrf-token')
 
-            with allure.step('Check data new user'):
-                response3 = MyRequests.get(f"/user/{self.user_id_new}",
-                                           headers={'x-csrf-token': self.token_new},
-                                           cookies={'auth_sid': self.auth_sid_new},
-                                           )
+        with allure.step('Check data new user'):
+            response3 = MyRequests.get(f"/user/{self.user_id_new}",
+                                       headers={'x-csrf-token': self.token_new},
+                                       cookies={'auth_sid': self.auth_sid_new},
+                                       )
 
-                Assertions.assert_json_value_by_name(response3,
-                                                     'firstName',
-                                                     self.first_name_new,
-                                                     "Wrong name after edit")
+            Assertions.assert_json_value_by_name(response3,
+                                                 'firstName',
+                                                 self.first_name_new,
+                                                 "Wrong name after edit")
 
     @allure.description('Change user data on incorrect email ')
+    @allure.severity(allure.severity_level.NORMAL)
     def test_edit_user_incorrect_email(self):
         incorrect_email = 'learnqa1xample.com'
         with allure.step('Edit user email'):
@@ -121,7 +125,8 @@ class TestUserEdit(BaseCase):
             Assertions.assert_contend_value(response, '{"error":"Invalid email format"}')
 
     @allure.description('Change user first name on incorrect')
-    def test_edit_user_incorrect_email(self):
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_edit_user_short_first_name(self):
         incorrect_firstName = 'l'
         with allure.step('Edit user firstName'):
             response = MyRequests.put(f"/user/{self.user_id}",

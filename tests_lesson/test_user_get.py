@@ -5,7 +5,9 @@ from lib.base_case import BaseCase
 from lib.my_reqests import MyRequests
 
 
+@allure.suite("Tests for get user data")
 class TestUserGet(BaseCase):
+    @allure.severity(allure.severity_level.NORMAL)
     def test_get_user_details_not_auth(self):
         response = MyRequests.get("/user/2")
 
@@ -14,6 +16,7 @@ class TestUserGet(BaseCase):
         Assertions.asser_json_has_not_key(response, "firstName")
         Assertions.asser_json_has_not_key(response, "lastName")
 
+    @allure.severity(allure.severity_level.CRITICAL)
     def test_get_user_details_auth_user(self):
         data = {
             'email': 'vinkotov@example.com',
@@ -31,6 +34,7 @@ class TestUserGet(BaseCase):
         expected_fields = ["username", "email", "firstName", "lastName"]
         Assertions.asser_json_has_keys(response2, expected_fields)
 
+    @allure.severity(allure.severity_level.NORMAL)
     def test_get_user_details_for_another_user(self):
         data = {
             'email': 'vinkotov@example.com',
