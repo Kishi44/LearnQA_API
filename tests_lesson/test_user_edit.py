@@ -7,7 +7,7 @@ import allure
 @allure.epic('Check user edit')
 class TestUserEdit(BaseCase):
 
-    def setup_class(self):
+    def setup_method(self):
         self.new_name = "Changed Name"
 
         with allure.step("Register user"):
@@ -83,7 +83,9 @@ class TestUserEdit(BaseCase):
                                        cookies={'auth_sid': self.auth_sid},
                                        data={'firstName': self.new_name})
 
-            Assertions.assert_code_status(response, 200)
+            Assertions.assert_code_status(response, 400)
+            Assertions.assert_json_value_by_name(response, 'error', 'This user can only edit their own data.',
+                                                 'Wrong answer')
 
             with allure.step('Login new user'):
                 login_data = {
@@ -129,6 +131,12 @@ class TestUserEdit(BaseCase):
 
             Assertions.assert_code_status(response, 400)
             Assertions.assert_contend_value(response, '{"error":"The value for field `firstName` is too short"}')
+
+    def teardown_method(self):
+        response = MyRequests.delete(f'/user/{self.user_id}',
+                                      headers={'x-csrf-token': self.token},
+                                      cookies={'auth_sid': self.auth_sid})
+        Assertions.assert_code_status(response, 200)
 
 
 
